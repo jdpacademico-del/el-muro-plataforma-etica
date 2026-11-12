@@ -3,6 +3,18 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/google3a28efa4f11a6881.html",
+      "destination": "/google3a28efa4f11a6881.html"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/sitemap.xml"
+    },
+    {
       "source": "/quienes-somos",
       "destination": "/quienes-somos.html"
     },
