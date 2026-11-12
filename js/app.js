@@ -80,6 +80,7 @@ function validarTextoEtico(texto) {
 // 2. INICIALIZACIÓN AL CARGAR EL DOM
 // ==============================================================================
 document.addEventListener('DOMContentLoaded', async () => {
+  initSplashScreen();
   initTheme();
   initVisitorIdBadge();
   await loadInstituciones();
@@ -95,6 +96,41 @@ document.addEventListener('DOMContentLoaded', async () => {
   initAdSlider('ad-slider-container');
   await reloadFeed();
 });
+
+/**
+ * Inicializa y controla el Splash Screen de bienvenida tipo app móvil.
+ * Se muestra durante 1.5s (1500ms) y desvanece suavemente en 400ms.
+ * Registra en sessionStorage para evitar fricción en recargas continuas del feed.
+ */
+function initSplashScreen() {
+  const splashEl = document.getElementById('splash-screen');
+  if (!splashEl) return;
+
+  // Si ya se mostró previamente en esta pestaña, remover sin demora
+  if (sessionStorage.getItem('muro_splash_shown')) {
+    splashEl.remove();
+    return;
+  }
+
+  // Evitar scroll de fondo durante la bienvenida
+  document.body.classList.add('overflow-hidden');
+
+  // Registrar en sessionStorage para la sesión actual
+  sessionStorage.setItem('muro_splash_shown', 'true');
+
+  // Transición de salida a los 1.5 segundos exactos
+  setTimeout(() => {
+    splashEl.classList.add('opacity-0', 'pointer-events-none');
+    document.body.classList.remove('overflow-hidden');
+
+    // Remover completamente del DOM tras la animación (400ms)
+    setTimeout(() => {
+      if (splashEl.parentNode) {
+        splashEl.remove();
+      }
+    }, 400);
+  }, 1500);
+}
 
 /**
  * Inicializa y restaura el tema claro / oscuro persistido

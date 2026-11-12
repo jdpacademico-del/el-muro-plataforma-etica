@@ -35,8 +35,59 @@
   </script>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" type="image/png" href="img/logo_el_muro.png">
+  <script>
+    // Previene parpadeo del Splash Screen si ya fue mostrado en la sesión actual
+    if (sessionStorage.getItem('muro_splash_shown')) {
+      document.documentElement.classList.add('splash-skip');
+    }
+  </script>
 </head>
 <body class="bg-[#FBF8F3] dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen font-sans antialiased selection:bg-orange-500 selection:text-white transition-colors duration-200">
+
+  <!-- Splash Screen (Pantalla de bienvenida tipo app móvil) -->
+  <div id="splash-screen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-between p-6 sm:p-10 select-none bg-gradient-to-b from-[#FBF8F3] via-[#FAF6ED] to-[#F3EDE2] dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 transition-opacity duration-400 ease-out">
+    <!-- Espaciador superior para equilibrio visual -->
+    <div class="h-4 sm:h-8"></div>
+
+    <!-- Contenedor central animado -->
+    <div class="flex flex-col items-center text-center max-w-sm w-full animate-splash-content">
+      <!-- Logo Oficial con Anillo Sutil y Resplandor -->
+      <div class="relative mb-6">
+        <div class="absolute -inset-3 rounded-3xl bg-gradient-to-tr from-orange-500/25 via-amber-400/20 to-emerald-400/20 blur-lg animate-pulse"></div>
+        <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white dark:bg-slate-800 p-2 shadow-2xl shadow-orange-500/15 border border-orange-100 dark:border-slate-700/60 flex items-center justify-center">
+          <img src="img/logo_el_muro.png" alt="Logo El Muro" class="w-full h-full object-contain">
+        </div>
+      </div>
+
+      <!-- Título Oficial -->
+      <h1 class="text-3xl sm:text-4xl font-outfit font-black tracking-tight text-slate-900 dark:text-white">
+        El Muro<span class="text-orange-500">.</span>
+      </h1>
+
+      <!-- Lema Institucional -->
+      <p class="mt-2 text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 max-w-[280px] leading-relaxed">
+        Cartelera digital estudiantil • Tu voz en el campus
+      </p>
+
+      <!-- Barra de Progreso Minimalista (1.5 segundos) -->
+      <div class="mt-8 w-48 sm:w-56 h-1.5 bg-slate-200/80 dark:bg-slate-800/90 rounded-full overflow-hidden shadow-inner p-0.5">
+        <div id="splash-progress" class="h-full bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-400 rounded-full splash-progress-bar"></div>
+      </div>
+    </div>
+
+    <!-- Distintivo Institucional Oficial en la parte inferior -->
+    <div class="flex flex-col items-center gap-1.5 pb-3 text-center">
+      <span class="text-[10px] uppercase font-bold tracking-widest text-slate-400 dark:text-slate-500">
+        Comunidad Universitaria Oficial
+      </span>
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/85 dark:bg-slate-800/85 border border-orange-200/70 dark:border-slate-700/70 shadow-sm backdrop-blur-md">
+        <span class="text-sm">🏛️</span>
+        <span class="text-xs font-black tracking-wide bg-gradient-to-r from-orange-600 to-amber-600 dark:from-orange-400 dark:to-amber-400 bg-clip-text text-transparent">
+          Instituto Tecnológico San Agustín
+        </span>
+      </div>
+    </div>
+  </div>
 
   <!-- Header Superior -->
   <header class="border-b border-orange-100/60 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-50">
