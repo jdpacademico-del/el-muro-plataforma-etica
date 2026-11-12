@@ -274,8 +274,10 @@ async function reloadFeed() {
 
     renderFeed();
     renderTendencias();
+    renderDestacadosYComunicados();
   } catch (error) {
     console.error('[App] Error al recargar el feed:', error);
+    document.getElementById('comunicados')?.classList.add('hidden');
     feedContainer.innerHTML = `
       <div class="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-3xl p-6 text-center space-y-2">
         <p class="text-rose-700 dark:text-rose-300 font-extrabold text-xs">⚠️ No se pudo cargar el feed de publicaciones.</p>
@@ -410,6 +412,8 @@ async function cargarMasPublicaciones() {
 
       state.posts = [...state.posts, ...newPosts];
       state.feedOffset = nextOffset;
+      renderTendencias();
+      renderDestacadosYComunicados();
     }
 
     state.totalActivePosts = result.totalCount || state.posts.length;
@@ -450,6 +454,78 @@ function renderTendencias() {
       <p class="font-bold text-slate-800 dark:text-slate-200 line-clamp-2">${t.titulo || t.descripcion || 'Publicación'}</p>
     </div>
   `).join('');
+}
+
+/**
+ * Renderiza dinámicamente la sección lateral de "Destacados & Comunicados".
+ * Depende 100% de datos reales de Supabase:
+ * - Filtra las publicaciones reales activas (priorizando comunicados o las de mayor número de reacciones).
+ * - Si no existen publicaciones reales (0 registros), oculta el contenedor completo (`hidden`)
+ *   para mantener la interfaz limpia hasta que se cree el primer post.
+ */
+function renderDestacadosYComunicados() {
+  const container = document.getElementById('comunicados');
+  const list = document.getElementById('comunicados-list');
+  if (!container || !list) return;
+
+  // Si no hay publicaciones reales en el feed, ocultar la sección completa
+  if (!state.posts || state.posts.length === 0) {
+    container.classList.add('hidden');
+    list.innerHTML = '';
+    return;
+  }
+
+  // Filtrar publicaciones:
+  // 1. Prioridad: aquellas con categoría 'Comunicado', 'Oficial' o etiquetas institucionales
+  const postsCopia = [...state.posts];
+  const comunicados = postsCopia.filter(p => {
+    const cat = (p.categoria || '').toLowerCase();
+    const tags = Array.isArray(p.etiquetas) ? p.etiquetas.join(' ').toLowerCase() : '';
+    return cat.includes('comunicado') || cat.includes('oficial') || tags.includes('comunicado') || tags.includes('oficial');
+  });
+
+  // Tomar comunicados prioritarios o, en su defecto, las publicaciones con más reacciones del feed
+  let itemsDestacados = comunicados.length > 0
+    ? comunicados.slice(0, 3)
+    : postsCopia.sort((a, b) => (b.total_reacciones || 0) - (a.total_reacciones || 0)).slice(0, 2);
+
+  if (itemsDestacados.length === 0) {
+    container.classList.add('hidden');
+    list.innerHTML = '';
+    return;
+  }
+
+  // Paleta de colores sutiles y armónicos
+  const colorSchemes = [
+    { bg: 'bg-amber-50/70 dark:bg-slate-900', border: 'border-amber-200/70 dark:border-slate-700', text: 'text-amber-950 dark:text-amber-300', badge: 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400' },
+    { bg: 'bg-emerald-50/70 dark:bg-slate-900', border: 'border-emerald-200/70 dark:border-slate-700', text: 'text-emerald-950 dark:text-emerald-300', badge: 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400' },
+    { bg: 'bg-orange-50/70 dark:bg-slate-900', border: 'border-orange-200/70 dark:border-slate-700', text: 'text-orange-950 dark:text-orange-300', badge: 'bg-orange-100 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400' }
+  ];
+
+  list.innerHTML = itemsDestacados.map((item, idx) => {
+    const color = colorSchemes[idx % colorSchemes.length];
+    const titulo = item.titulo || item.descripcion || 'Publicación Destacada';
+    const reacciones = item.total_reacciones || 0;
+    const categoria = item.categoria || 'Comunidad';
+
+    return `
+      <div onclick="window.desplazarAPublicacion('${item.id}')"
+        class="p-3.5 ${color.bg} rounded-2xl border ${color.border} space-y-1.5 cursor-pointer hover:scale-[1.01] transition-transform group" title="Ver publicación en el feed">
+        <div class="flex items-center justify-between text-[10px] font-extrabold">
+          <span class="px-2 py-0.5 rounded-full ${color.badge} uppercase tracking-wider">${categoria}</span>
+          <span class="text-slate-400 font-semibold flex items-center gap-1">
+            <span>❤️</span> ${reacciones}
+          </span>
+        </div>
+        <p class="font-extrabold ${color.text} line-clamp-2 text-xs leading-snug group-hover:underline">
+          ${titulo}
+        </p>
+      </div>
+    `;
+  }).join('');
+
+  // Mostrar el contenedor solo porque ahora hay contenido verificado de la BD
+  container.classList.remove('hidden');
 }
 
 // ==============================================================================
@@ -1040,6 +1116,14 @@ function showNotification(message, type = 'success') {
 // Exponer funciones necesarias en el objeto global window para compatibilidad
 window.filtrarEtiqueta = (tag) => filtrarCategoria(tag);
 window.cargarMasPublicaciones = cargarMasPublicaciones;
+window.desplazarAPublicacion = (postId) => {
+  const el = document.getElementById(`post-${postId}`) || document.querySelector(`[data-post-id="${postId}"]`);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('ring-4', 'ring-orange-400/50', 'transition-all');
+    setTimeout(() => el.classList.remove('ring-4', 'ring-orange-400/50'), 2500);
+  }
+};
 window.irAPublicar = () => {
   if (window.innerWidth < 1024) {
     abrirFormularioMovil();

@@ -416,20 +416,13 @@
         </div>
       </div>
 
-      <!-- Comunicados Oficiales -->
-      <div id="comunicados" class="bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-slate-700 rounded-3xl p-5 shadow-sm space-y-4">
+      <!-- Comunicados Oficiales y Publicaciones Destacadas -->
+      <div id="comunicados" class="hidden bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-slate-700 rounded-3xl p-5 shadow-sm space-y-4 animate-fade-in">
         <h4 class="text-xs font-jakarta font-extrabold uppercase text-slate-900 dark:text-white tracking-wider flex items-center gap-2">
           <span>📢</span> Destacados & Comunicados
         </h4>
-        <div class="space-y-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
-          <div class="p-3 bg-amber-50/60 dark:bg-slate-900 rounded-2xl border border-amber-100 dark:border-slate-700 space-y-1">
-            <p class="font-extrabold text-amber-900 dark:text-amber-300">Feria de Emprendimiento</p>
-            <p class="text-[11px] text-slate-500">Viernes 9:00 AM • Plaza Central</p>
-          </div>
-          <div class="p-3 bg-emerald-50/60 dark:bg-slate-900 rounded-2xl border border-emerald-100 dark:border-slate-700 space-y-1">
-            <p class="font-extrabold text-emerald-900 dark:text-emerald-300">Jornada de Vacunación</p>
-            <p class="text-[11px] text-slate-500">Miércoles • Bienestar Universitario</p>
-          </div>
+        <div id="comunicados-list" class="space-y-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <!-- Renderizado dinámico según publicaciones reales de Supabase -->
         </div>
       </div>
 
