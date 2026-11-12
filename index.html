@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Muro | Red de Libre Expresión Estudiantil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          screens: {
+            'xs': '420px',
+          },
+          fontFamily: {
+            outfit: ["'Outfit'", 'sans-serif'],
+            jakarta: ["'Plus Jakarta Sans'", 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="img/logo_el_muro.png">
+</head>
+<body class="bg-[#FBF8F3] dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen font-sans antialiased selection:bg-orange-500 selection:text-white transition-colors duration-200">
+
+  <!-- Header Superior -->
+  <header class="border-b border-orange-100/60 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Logo e Identidad -->
+      <a href="#home" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-orange-500 via-amber-500 to-emerald-400 p-0.5 shadow-md shadow-orange-500/15 group-hover:scale-105 transition-transform">
+          <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[14px] flex items-center justify-center overflow-hidden p-0.5">
+            <img src="img/logo_el_muro.png" alt="Logo El Muro" class="w-full h-full object-contain">
+          </div>
+        </div>
+        <div>
+          <h1 class="text-xl font-outfit font-black tracking-tight text-slate-900 dark:text-white">
+            El Muro<span class="text-orange-500">.</span>
+          </h1>
+          <p class="hidden sm:block text-[11px] italic font-medium text-slate-400 dark:text-slate-400 tracking-wide -mt-0.5">Tu voz en el campus</p>
+        </div>
+      </a>
+
+      <!-- Buscador y Estado Global de Sesión / Tema -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="relative hidden md:block w-60">
+          <input type="text" id="input-buscar" placeholder="Buscar publicaciones..." 
+            class="w-full bg-slate-100/80 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 rounded-full py-2 pl-9 pr-4 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all dark:text-slate-200">
+          <span class="absolute left-3 top-2.5 text-slate-400 text-xs">🔍</span>
+        </div>
+
+        <!-- Indicador de Conectados Dinámico -->
+        <div class="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full shrink-0">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="conectados-count" class="text-[11px] sm:text-xs font-extrabold text-emerald-800 dark:text-emerald-300 whitespace-nowrap">
+            18 <span class="hidden xs:inline">activos</span>
+          </span>
+        </div>
+
+        <!-- Toggle Tema Claro / Oscuro -->
+        <button id="btn-theme-toggle" class="p-2 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all text-sm">
+          🌙
+        </button>
+
+        <!-- Botón Hamburguesa (solo móvil) -->
+        <button id="btn-mobile-menu" class="lg:hidden p-2 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-slate-700 transition-all text-lg" aria-label="Abrir menú de navegación">
+          ☰
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout Principal (3 Columnas Responsive) -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Overlay oscuro del menú móvil -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity" aria-hidden="true"></div>
+
+    <!-- Sidebar Izquierda: Navegación & Anuncios -->
+    <!-- En desktop: columna normal. En móvil: drawer lateral deslizable -->
+    <aside id="sidebar-nav" class="
+      fixed top-0 left-0 h-full w-72 z-50 bg-[#FBF8F3] dark:bg-slate-900 border-r border-orange-100/60 dark:border-slate-800 shadow-2xl
+      transform -translate-x-full transition-transform duration-300 ease-in-out
+      lg:static lg:translate-x-0 lg:col-span-3 lg:w-auto lg:h-auto lg:z-auto lg:shadow-none lg:border-r-0 lg:bg-transparent lg:dark:bg-transparent
+      space-y-6 p-5 lg:p-0 overflow-y-auto
+    ">
+      <!-- Encabezado del Drawer Móvil (solo visible en móvil) -->
+      <div class="flex items-center justify-between lg:hidden pb-3 border-b border-orange-100/60 dark:border-slate-700">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-orange-500 via-amber-500 to-emerald-400 p-0.5 shadow-sm">
+            <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[12px] flex items-center justify-center overflow-hidden p-0.5">
+              <img src="img/logo_el_muro.png" alt="Logo El Muro" class="w-full h-full object-contain">
+            </div>
+          </div>
+          <span class="text-sm font-outfit font-black text-slate-900 dark:text-white">El Muro<span class="text-orange-500">.</span></span>
+        </div>
+        <button id="btn-close-mobile-menu" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 hover:bg-rose-50 hover:text-rose-600 transition-all text-sm" aria-label="Cerrar menú">
+          ✕
+        </button>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-slate-700 rounded-3xl p-5 shadow-sm space-y-4">
+        <nav class="space-y-1 font-bold text-xs">
+          <a href="#home" onclick="filtrarEtiqueta('Todo'); window.__cerrarMenuMovil?.();" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 transition-all">
+            <span class="text-lg">🏛️</span> Muro Principal
+          </a>
+          <a href="#comunicados" onclick="window.__cerrarMenuMovil?.()" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+            <span class="text-lg">📢</span> Comunicados
+          </a>
+          <a href="quienes-somos.html" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+            <span class="text-lg">🛡️</span> ¿Quiénes Somos?
+          </a>
+        </nav>
+
+        <button onclick="irAPublicar(); window.__cerrarMenuMovil?.()" class="w-full bg-gradient-to-r from-orange-500 via-amber-500 to-rose-500 text-white font-extrabold py-3.5 px-4 rounded-2xl text-sm shadow-md shadow-orange-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2">
+          <span>+</span> Crear Publicación
+        </button>
+      </div>
+
+      <!-- Enlaces Legales (Drawer Móvil) -->
+      <div class="lg:hidden space-y-1 font-bold text-xs">
+        <a href="terminos-condiciones.html" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+          <span class="text-lg">📜</span> Términos y Condiciones
+        </a>
+        <a href="politicas-privacidad.html" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+          <span class="text-lg">⚖️</span> Políticas de Privacidad
+        </a>
+        <a href="admin.html" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+          <span class="text-lg">🔐</span> Portal de Moderación
+        </a>
+      </div>
+    </aside>
+
+    <!-- Área Central: Banner + Publicador Ético + Categorías + Feed -->
+    <main class="lg:col-span-6 space-y-6">
+
+      <!-- Hero Banner / Bienvenida con imagen institucional -->
+      <section id="home" class="relative overflow-hidden rounded-3xl border border-orange-200/50 dark:border-slate-700 shadow-sm">
+        <!-- Imagen de fondo responsive -->
+        <img src="img/banner.png" alt="Campus Instituto Tecnológico San Agustín" 
+          class="absolute inset-0 w-full h-full object-cover object-center" loading="eager">
+        <!-- Overlay degradado para legibilidad del texto -->
+        <div class="absolute inset-0 bg-gradient-to-r from-[#fef0dd]/95 via-[#fef0dd]/80 to-transparent dark:from-slate-900/95 dark:via-slate-900/80 dark:to-slate-900/30"></div>
+        <!-- Overlay sutil inferior para reforzar contraste en móvil -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[#fef0dd]/60 via-transparent to-transparent dark:from-slate-900/60 sm:hidden"></div>
+        <!-- Contenido del hero -->
+        <div class="relative z-10 p-6 sm:p-8 min-h-[180px] sm:min-h-[200px] flex items-center">
+          <div class="max-w-md space-y-3">
+            <div class="inline-flex items-center gap-2 bg-white/80 dark:bg-slate-900/70 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-bold text-orange-700 dark:text-orange-300 shadow-sm">
+              🛡️ Espacio Seguro & Respetuoso
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-jakarta font-extrabold text-slate-900 dark:text-white leading-tight drop-shadow-sm">
+              El pulso de nuestra comunidad estudiantil
+            </h2>
+            <p class="text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold leading-relaxed drop-shadow-sm">
+              Comparte vivencias, preguntas, sugerencias y memes del instituto. Donde nos cuidamos entre todos, sin nombres propios ni faltas de respeto.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Botón Móvil para Desplegar el Formulario de Publicación -->
+      <button type="button" id="btn-desplegar-publicar-movil" class="lg:hidden w-full bg-gradient-to-r from-orange-500 via-amber-500 to-rose-500 text-white font-jakarta font-extrabold py-3.5 px-4 rounded-3xl text-sm shadow-md shadow-orange-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer">
+        <span>+</span> Publicar en El Muro
+      </button>
+
+      <!-- Formulario de Publicación Responsable (Oculto en móvil por defecto, visible en desktop) -->
+      <section id="seccion-publicar" class="hidden lg:block bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-slate-700 rounded-3xl p-5 shadow-sm space-y-4 animate-fade-in">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-jakarta font-extrabold uppercase text-slate-400 dark:text-slate-500 tracking-wider">Publicar en El Muro</h3>
+          <div class="flex items-center gap-2.5">
+            <span id="char-count" class="text-xs font-bold text-slate-400">0 / 280</span>
+            <button type="button" id="btn-cerrar-form-movil" class="lg:hidden p-1 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-rose-100 text-slate-500 hover:text-rose-600 text-xs font-bold transition-all" title="Ocultar formulario">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <!-- Título obligatorio -->
+          <input type="text" id="titulo-publicacion" maxlength="100" 
+            placeholder="Título de la publicación (ej. Horarios especiales de la biblioteca)..." 
+            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 rounded-2xl px-3.5 py-2.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all">
+
+          <!-- Contenido / Descripción -->
+          <textarea id="contenido" rows="3" maxlength="280" 
+            placeholder="¿Qué quieres compartir hoy en la comunidad? (Recuerda: sin nombres propios ni faltas de respeto)..." 
+            class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 rounded-2xl p-3.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 transition-all resize-none"></textarea>
+
+          <!-- Banner Alerta Filtro Ético si escribe nombres/insultos -->
+          <div id="alerta-filtro-etico" class="hidden bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 p-3 rounded-2xl text-xs font-bold text-rose-700 dark:text-rose-300">
+            ⚠️ <span>No se permiten nombres propios ni lenguaje ofensivo.</span>
+          </div>
+
+          <!-- Barra de Configuración: Menú Desplegable de Etiquetas y Botón de Imagen -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <!-- Menú Desplegable de Etiquetas Oficiales -->
+            <div class="relative" id="dropdown-etiquetas-wrapper">
+              <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wider">
+                Etiqueta Oficial
+              </label>
+              
+              <!-- Botón Trigger del Menú Desplegable -->
+              <button type="button" id="btn-dropdown-etiquetas" class="w-full h-[42px] bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700 rounded-2xl px-3.5 flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 transition-all cursor-pointer">
+                <div id="dropdown-trigger-tags" class="flex items-center gap-1.5 overflow-hidden truncate">
+                  <!-- Renderizado dinámico de la selección -->
+                </div>
+                <span id="dropdown-chevron" class="text-slate-400 text-xs transition-transform duration-200 ml-2">▼</span>
+              </button>
+
+              <!-- Panel Desplegable Flotante -->
+              <div id="menu-desplegable-etiquetas" class="hidden absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-800 border border-orange-100/90 dark:border-slate-700 rounded-2xl shadow-xl p-2 z-40 space-y-1 animate-fade-in max-h-64 overflow-y-auto">
+                <!-- Opciones de etiquetas renderizadas dinámicamente -->
+              </div>
+            </div>
+
+            <!-- Botón Estilizado para Adjuntar Imagen con Ícono -->
+            <div>
+              <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-1.5 uppercase tracking-wider">
+                Adjuntar Imagen (Opcional)
+              </label>
+              <input type="file" id="imagen" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden">
+              <label for="imagen" id="lbl-imagen-trigger" class="w-full h-[42px] bg-slate-50 hover:bg-orange-50/70 dark:bg-slate-900 dark:hover:bg-slate-800/80 border border-dashed border-orange-300 dark:border-slate-700 rounded-2xl px-4 flex items-center justify-center gap-2.5 text-xs font-bold text-orange-600 dark:text-orange-400 cursor-pointer transition-all shadow-xs group">
+                <span class="text-base group-hover:scale-110 transition-transform">🖼️</span>
+                <span id="lbl-imagen-texto" class="truncate">Seleccionar Imagen</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Contenedor de Previsualización WebP Optimizada (se muestra al elegir imagen) -->
+          <div id="preview-imagen-container" class="hidden rounded-2xl overflow-hidden border border-orange-200/80 dark:border-slate-700 bg-orange-50/40 dark:bg-slate-900/60 p-3 animate-fade-in">
+            <div class="flex items-center gap-3">
+              <img id="preview-imagen-thumb" src="" alt="Previsualización" class="w-14 h-14 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div class="flex-1 min-w-0 text-[11px]">
+                <p id="preview-imagen-info" class="font-extrabold text-slate-800 dark:text-slate-100 truncate">WebP optimizado</p>
+                <p id="preview-imagen-ratio" class="text-emerald-600 dark:text-emerald-400 font-extrabold text-[10px] mt-0.5">🔒 Metadatos EXIF eliminados</p>
+              </div>
+              <button type="button" id="btn-quitar-imagen" class="px-3 py-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 dark:bg-rose-950/60 dark:hover:bg-rose-900 text-rose-600 dark:text-rose-300 text-xs font-bold transition-all">
+                ✕ Quitar
+              </button>
+            </div>
+          </div>
+
+          <button id="btn-publicar-post" class="w-full bg-gradient-to-r from-orange-500 via-amber-500 to-rose-500 text-white font-extrabold py-3.5 rounded-2xl text-xs shadow-md shadow-orange-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer">
+            <span>🏛️</span> Publicar en El Muro
+          </button>
+        </div>
+      </section>
+
+      <!-- Barra Deslizable de las 7 Categorías Oficiales -->
+      <section class="space-y-3">
+        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none text-xs font-bold">
+          <button data-tag="Todo" class="tag-filter-btn active bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-3.5 py-2 rounded-full whitespace-nowrap shadow-sm">
+            ✨ Todos
+          </button>
+          <button data-tag="Sugerencias e ideas" class="tag-filter-btn tag-indigo px-3.5 py-2 rounded-full whitespace-nowrap">
+            💡 #Sugerencias e ideas
+          </button>
+          <button data-tag="Académico" class="tag-filter-btn tag-emerald px-3.5 py-2 rounded-full whitespace-nowrap">
+            📚 #Académico
+          </button>
+          <button data-tag="Objetos perdidos" class="tag-filter-btn tag-red px-3.5 py-2 rounded-full whitespace-nowrap">
+            🔍 #Objetos perdidos
+          </button>
+          <button data-tag="Eventos y actividades" class="tag-filter-btn tag-pink px-3.5 py-2 rounded-full whitespace-nowrap">
+            🎉 #Eventos y actividades
+          </button>
+          <button data-tag="Curiosidades" class="tag-filter-btn tag-violet px-3.5 py-2 rounded-full whitespace-nowrap">
+            🔮 #Curiosidades
+          </button>
+          <button data-tag="Emprendimientos y clasificados" class="tag-filter-btn tag-orange px-3.5 py-2 rounded-full whitespace-nowrap">
+            💼 #Emprendimientos y clasificados
+          </button>
+          <button data-tag="Comunidad" class="tag-filter-btn tag-blue px-3.5 py-2 rounded-full whitespace-nowrap">
+            🤝 #Comunidad
+          </button>
+        </div>
+      </section>
+
+      <!-- Feed de Tarjetas Interactivas -->
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-jakarta font-extrabold text-slate-900 dark:text-white uppercase tracking-wider">Feed Universitario</h3>
+          <span class="text-xs font-bold text-slate-400">⏳ Ciclo 48 Horas</span>
+        </div>
+
+        <div id="feed-container" class="space-y-5">
+          <!-- Renderizado dinámico vía JS Pub/Sub -->
+        </div>
+      </section>
+
+      <!-- Código Ético / Transparencia -->
+      <section id="nosotros" class="bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-slate-700 rounded-3xl p-6 space-y-3 shadow-sm">
+        <span class="text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 px-3 py-1 rounded-full">
+          🛡️ Convivencia & Código Ético
+        </span>
+        <h3 class="text-xl font-jakarta font-extrabold text-slate-900 dark:text-white">Un espacio limpio hecho por y para estudiantes</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+          El Muro ofrece una alternativa sana a las redes no reguladas. Contamos con filtros automáticos que protegen la privacidad de las personas y un sistema de moderación activa donde 3 reportes comunitarios retiran automáticamente cualquier contenido inadecuado.
+        </p>
+      </section>
+
+    </main>
+
+    <!-- Sidebar Derecha: Módulo de Publicidad Slider + Tendencias + Comunicados -->
+    <aside class="lg:col-span-3 space-y-6">
+
+      <!-- Módulo de Publicidad Patrocinada Configurable (Slider Monetizable) -->
+      <div class="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-slate-800 dark:to-orange-950/20 border-2 border-orange-200/80 dark:border-orange-900/60 rounded-3xl p-4 shadow-sm space-y-3 relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black uppercase tracking-wider bg-orange-500 text-white px-2.5 py-0.5 rounded-full">
+            ⭐ Patrocinado
+          </span>
+          <span class="text-[10px] font-bold text-slate-400">Espacio Comercial</span>
+        </div>
+
+        <div id="ad-slider-container" class="relative">
+          <!-- Banner 1 -->
+          <div class="ad-slide text-xs space-y-2">
+            <a href="https://wa.me/573001234567" target="_blank" rel="noopener noreferrer" class="block group">
+              <div class="h-28 rounded-2xl bg-slate-200 dark:bg-slate-700 overflow-hidden relative border border-orange-200/60 dark:border-slate-700 shadow-inner">
+                <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80" alt="Comida Local" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                <span class="absolute bottom-2 left-2 bg-emerald-600/90 text-white px-2 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm">
+                  💬 WhatsApp ↗
+                </span>
+              </div>
+              <p class="font-extrabold text-slate-800 dark:text-slate-100 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors mt-2 leading-snug line-clamp-2">
+                La Hueca Gourmet — 15% de descuento para estudiantes presentando carnet.
+              </p>
+              <div class="flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1 truncate">
+                <span>📍</span> <span>Frente a la cafetería central, Bloque B</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="flex justify-center gap-1.5 pt-1">
+          <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+          <span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+        </div>
+      </div>
+
+      <!-- Tendencias de la Semana (Lo más votado) -->
+      <div class="bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-slate-700 rounded-3xl p-5 shadow-sm space-y-4">
+        <h4 class="text-xs font-jakarta font-extrabold uppercase text-slate-900 dark:text-white tracking-wider flex items-center gap-2">
+          <span>🔥</span> Tendencias de la Semana
+        </h4>
+        <div id="tendencias-container" class="space-y-3 text-xs">
+          <!-- Renderizado dinámico -->
+        </div>
+      </div>
+
+      <!-- Comunicados Oficiales -->
+      <div id="comunicados" class="bg-white dark:bg-slate-800 border border-orange-100/60 dark:border-slate-700 rounded-3xl p-5 shadow-sm space-y-4">
+        <h4 class="text-xs font-jakarta font-extrabold uppercase text-slate-900 dark:text-white tracking-wider flex items-center gap-2">
+          <span>📢</span> Destacados & Comunicados
+        </h4>
+        <div class="space-y-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <div class="p-3 bg-amber-50/60 dark:bg-slate-900 rounded-2xl border border-amber-100 dark:border-slate-700 space-y-1">
+            <p class="font-extrabold text-amber-900 dark:text-amber-300">Feria de Emprendimiento</p>
+            <p class="text-[11px] text-slate-500">Viernes 9:00 AM • Plaza Central</p>
+          </div>
+          <div class="p-3 bg-emerald-50/60 dark:bg-slate-900 rounded-2xl border border-emerald-100 dark:border-slate-700 space-y-1">
+            <p class="font-extrabold text-emerald-900 dark:text-emerald-300">Jornada de Vacunación</p>
+            <p class="text-[11px] text-slate-500">Miércoles • Bienestar Universitario</p>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <footer class="border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 py-8 mt-16 text-center text-xs text-slate-400 font-medium space-y-3">
+    <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-bold text-slate-500 dark:text-slate-400">
+      <a href="index.html" class="text-orange-600 dark:text-orange-400">Inicio</a>
+      <span>•</span>
+      <a href="quienes-somos.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors">¿Quiénes Somos?</a>
+      <span>•</span>
+      <a href="terminos-condiciones.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors">Términos y Condiciones</a>
+      <span>•</span>
+      <a href="politicas-privacidad.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors">Políticas de Privacidad</a>
+      <span>•</span>
+      <a href="admin.html" class="hover:text-orange-600 dark:hover:text-orange-400 transition-colors">Portal de Moderación</a>
+    </div>
+    <p>© 2026 El Muro — Plataforma Ética & Libre Expresión Estudiantil 🏛️</p>
+  </footer>
+
+  <!-- Modal de Reporte Comunitario Ético (iOS Style) -->
+  <div id="modal-reporte" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 border border-orange-100 dark:border-slate-700 rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4 animate-fade-in">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🚨</span>
+          <h4 class="text-sm font-extrabold text-slate-900 dark:text-white">Reportar Publicación</h4>
+        </div>
+        <button type="button" id="btn-cancelar-reporte" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+        Protegemos la convivencia estudiantil. Las publicaciones que alcancen <strong>3 reportes comunitarios</strong> se ocultan preventivamente de forma automática.
+      </p>
+
+      <form id="form-reporte" class="space-y-3">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Motivo Principal</label>
+          <select id="motivo-reporte-select" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold rounded-xl p-2.5 text-slate-700 dark:text-slate-200 focus:outline-none focus:border-orange-400">
+            <option value="Mención de nombres propios o datos personales">Mención de nombres propios o datos personales</option>
+            <option value="Lenguaje ofensivo o ciberacoso">Lenguaje ofensivo o ciberacoso</option>
+            <option value="Información falsa o difamación">Información falsa o difamación</option>
+            <option value="Spam o publicidad no autorizada">Spam o publicidad no autorizada</option>
+            <option value="Contenido sexualmente explícito o violento">Contenido sexualmente explícito o violento</option>
+            <option value="Otro motivo ético">Otro motivo ético</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Detalle Opcional</label>
+          <textarea id="motivo-reporte-extra" rows="2" placeholder="Agrega contexto si es necesario..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-700 dark:text-slate-200 resize-none focus:outline-none focus:border-orange-400"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-3 rounded-2xl text-xs shadow-md transition-all cursor-pointer">
+          Enviar Reporte Ciudadano
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script Menú Hamburguesa Móvil -->
+  <script>
+    (function() {
+      const btnOpen = document.getElementById('btn-mobile-menu');
+      const btnClose = document.getElementById('btn-close-mobile-menu');
+      const sidebar = document.getElementById('sidebar-nav');
+      const overlay = document.getElementById('mobile-menu-overlay');
+
+      function abrirMenu() {
+        sidebar?.classList.remove('-translate-x-full');
+        sidebar?.classList.add('translate-x-0');
+        overlay?.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function cerrarMenu() {
+        sidebar?.classList.add('-translate-x-full');
+        sidebar?.classList.remove('translate-x-0');
+        overlay?.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+
+      btnOpen?.addEventListener('click', abrirMenu);
+      btnClose?.addEventListener('click', cerrarMenu);
+      overlay?.addEventListener('click', cerrarMenu);
+
+      // Exponer globalmente para que los links del drawer lo cierren
+      window.__cerrarMenuMovil = cerrarMenu;
+    })();
+  </script>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Archivos de entorno y credenciales locales (blindaje estricto)
+.env
+.env.*
+.env.local
+.env.*.local
+
+# Documentos ofimáticos y archivos temporales/sensibles
+*.pptx
+*.docx
+*.pdf
+*.xlsx
+*.csv
+
+# Logs y depuración
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs y editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Builds y temporales de Vercel / Despliegue
+.vercel/
+.output/
+dist/
+build/

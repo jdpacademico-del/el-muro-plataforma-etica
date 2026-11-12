@@ -1,0 +1,49 @@
+/* Estilos Personalizados y Palette Oficial para El Muro */
+
+/* Tipografías Oficiales */
+.font-outfit {
+  font-family: 'Outfit', sans-serif;
+}
+
+.font-jakarta {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Colores Oficiales Soft para Hashtags */
+.tag-blue { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.tag-violet { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+.tag-emerald { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.tag-orange { background-color: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+.tag-pink { background-color: #fce7f3; color: #9d174d; border: 1px solid #fbcfe8; }
+.tag-yellow { background-color: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.tag-turquoise { background-color: #ccfbf1; color: #115e59; border: 1px solid #99f6e4; }
+.tag-red { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.tag-indigo { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+.tag-cyan { background-color: #cffafe; color: #155e75; border: 1px solid #a5f3fc; }
+
+/* Dark mode tags adjustments */
+.dark .tag-blue { background-color: rgba(3, 105, 161, 0.2); color: #7dd3fc; border-color: rgba(3, 105, 161, 0.4); }
+.dark .tag-violet { background-color: rgba(107, 33, 168, 0.2); color: #c084fc; border-color: rgba(107, 33, 168, 0.4); }
+.dark .tag-emerald { background-color: rgba(6, 95, 70, 0.2); color: #6ee7b7; border-color: rgba(6, 95, 70, 0.4); }
+.dark .tag-orange { background-color: rgba(154, 52, 18, 0.2); color: #fdba74; border-color: rgba(154, 52, 18, 0.4); }
+.dark .tag-pink { background-color: rgba(157, 23, 77, 0.2); color: #f472b6; border-color: rgba(157, 23, 77, 0.4); }
+.dark .tag-yellow { background-color: rgba(133, 77, 14, 0.2); color: #fde047; border-color: rgba(133, 77, 14, 0.4); }
+.dark .tag-red { background-color: rgba(153, 27, 27, 0.2); color: #fca5a5; border-color: rgba(153, 27, 27, 0.4); }
+.dark .tag-indigo { background-color: rgba(55, 48, 163, 0.2); color: #a5b4fc; border-color: rgba(55, 48, 163, 0.4); }

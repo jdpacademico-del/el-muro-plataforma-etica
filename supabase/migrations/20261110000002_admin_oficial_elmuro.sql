@@ -1,0 +1,86 @@
+-- ==============================================================================
+-- MIGRACIÓN: Registro del Administrador Oficial (admin@elmuro.com)
+-- Proyecto: El Muro - Plataforma Ética Universitaria
+-- Fecha: 2026-11-10
+-- ==============================================================================
+-- Esta migración registra o vincula al usuario administrador oficial con el
+-- correo admin@elmuro.com en auth.users de Supabase, asegurando que:
+--   1. Tenga el email confirmado (email_confirmed_at activo).
+--   2. Cuente con permisos de moderación completos gracias al rol 'authenticated'
+--      y las políticas RLS ya definidas que otorgan control total a usuarios
+--      autenticados sobre publicaciones, reportes e historial_moderacion.
+--
+-- NOTA IMPORTANTE:
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Supabase NO permite insertar usuarios directamente en auth.users desde una
+-- migración SQL estándar (se requieren privilegios de superusuario/service_role).
+--
+-- El registro del administrador se debe realizar mediante UNO de estos métodos:
+--
+--   ▶ OPCIÓN A — Dashboard de Supabase (recomendada):
+--     1. Ir a Authentication → Users en el panel de Supabase.
+--     2. Crear usuario con email: admin@elmuro.com y la contraseña deseada.
+--     3. Confirmar manualmente el email activando "Email Confirmed".
+--
+--   ▶ OPCIÓN B — Supabase Admin API (service_role key):
+--     Ejecutar este código desde un entorno seguro (nunca desde el frontend):
+--
+--     const { data, error } = await supabaseAdmin.auth.admin.createUser({
+--       email: 'admin@elmuro.com',
+--       password: 'TU_CONTRASEÑA_SEGURA',
+--       email_confirm: true,
+--       user_metadata: {
+--         role: 'moderador_principal',
+--         nombre: 'Administrador El Muro'
+--       }
+--     });
+--
+--   ▶ OPCIÓN C — SQL directo con service_role (solo si se tiene acceso):
+--     INSERT INTO auth.users (
+--       instance_id, id, aud, role, email,
+--       encrypted_password, email_confirmed_at,
+--       raw_app_meta_data, raw_user_meta_data,
+--       created_at, updated_at, confirmation_token
+--     ) VALUES (
+--       '00000000-0000-0000-0000-000000000000',
+--       gen_random_uuid(),
+--       'authenticated',
+--       'authenticated',
+--       'admin@elmuro.com',
+--       crypt('TU_CONTRASEÑA_SEGURA', gen_salt('bf')),
+--       NOW(),
+--       '{"provider":"email","providers":["email"]}'::jsonb,
+--       '{"role":"moderador_principal","nombre":"Administrador El Muro"}'::jsonb,
+--       NOW(),
+--       NOW(),
+--       ''
+--     )
+--     ON CONFLICT (email) DO UPDATE SET
+--       email_confirmed_at = COALESCE(auth.users.email_confirmed_at, NOW()),
+--       raw_user_meta_data = auth.users.raw_user_meta_data ||
+--         '{"role":"moderador_principal"}'::jsonb,
+--       updated_at = NOW();
+--
+-- ─────────────────────────────────────────────────────────────────────────────
+-- PERMISOS DE MODERACIÓN:
+-- El usuario admin@elmuro.com obtiene permisos completos de moderación
+-- automáticamente a través de las políticas RLS existentes (migración 03):
+--
+--   • publicaciones  → "Admins tienen control total sobre publicaciones"
+--                       (SELECT, INSERT, UPDATE, DELETE para 'authenticated')
+--   • reportes       → "Solo administradores pueden consultar/moderar/eliminar reportes"
+--                       (ALL para 'authenticated')
+--   • historial_moderacion → "Solo administradores acceden al historial"
+--                       (ALL para 'authenticated')
+--   • instituciones  → "Admins tienen gestión total de instituciones"
+--                       (ALL para 'authenticated')
+--   • anuncios_patrocinados → "Admins gestionan anuncios patrocinados"
+--                       (ALL para 'authenticated')
+--
+-- No se requiere una tabla adicional de roles: cualquier usuario registrado
+-- en auth.users con sesión activa tiene el rol 'authenticated' y accede
+-- a todas las funciones de moderación.
+-- ==============================================================================
+
+-- Marcador de migración aplicada (no-op seguro)
+SELECT 'Migración 20261110000002: Instrucciones de registro de admin@elmuro.com documentadas. Ejecutar registro vía Dashboard o Admin API.' AS nota;
