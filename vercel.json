@@ -1,7 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
   "rewrites": [
+    {
+      "source": "/google3a28efa4f11a6881",
+      "destination": "/google3a28efa4f11a6881.html"
+    },
     {
       "source": "/google3a28efa4f11a6881.html",
       "destination": "/google3a28efa4f11a6881.html"
