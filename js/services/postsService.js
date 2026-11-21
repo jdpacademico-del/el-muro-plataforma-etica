@@ -342,7 +342,14 @@ export async function fetchInstituciones() {
       return INSTITUCIONES_FALLBACK;
     }
 
-    return data && data.length > 0 ? data : INSTITUCIONES_FALLBACK;
+    const list = data && data.length > 0 ? data : INSTITUCIONES_FALLBACK;
+    return list.map(inst => {
+      const fallback = INSTITUCIONES_FALLBACK.find(f => f.id === inst.id);
+      return {
+        ...inst,
+        codigo_acceso: inst.codigo_acceso || fallback?.codigo_acceso || null
+      };
+    });
   } catch (err) {
     console.warn('[PostsService] Excepción consultando instituciones:', err);
     return INSTITUCIONES_FALLBACK;
@@ -483,7 +490,15 @@ export async function createPost(postData) {
   } = postData;
 
   if (!institucionId) throw new Error('Debes seleccionar una institución universitaria.');
-  if (!codigoAcceso || !codigoAcceso.trim()) throw new Error('El código institucional es obligatorio para validar pertenencia de forma anónima.');
+
+  // Resolver y asegurar concordancia del código institucional con la institución seleccionada
+  let finalCodigoAcceso = (codigoAcceso || '').trim();
+  const knownFallback = INSTITUCIONES_FALLBACK.find(i => i.id === institucionId);
+  if (knownFallback && (!finalCodigoAcceso || (knownFallback.codigo_acceso && finalCodigoAcceso !== knownFallback.codigo_acceso && finalCodigoAcceso === 'UNICORDOBA2026'))) {
+    finalCodigoAcceso = knownFallback.codigo_acceso;
+  }
+
+  if (!finalCodigoAcceso) throw new Error('El código institucional es obligatorio para validar pertenencia de forma anónima.');
   if (!titulo || !titulo.trim()) throw new Error('El título de la publicación es obligatorio.');
 
   // Normalizar categoría
@@ -500,7 +515,7 @@ export async function createPost(postData) {
     const dummyInst = INSTITUCIONES_FALLBACK.find(i => i.id === institucionId) || INSTITUCIONES_FALLBACK[0];
     
     // Validar código institucional de prueba
-    if (dummyInst.codigo_acceso && dummyInst.codigo_acceso.toUpperCase() !== codigoAcceso.trim().toUpperCase()) {
+    if (dummyInst.codigo_acceso && dummyInst.codigo_acceso.toUpperCase() !== finalCodigoAcceso.toUpperCase()) {
       throw new Error(`Código institucional inválido para ${dummyInst.nombre}. (Código de prueba: ${dummyInst.codigo_acceso})`);
     }
 
@@ -528,7 +543,7 @@ export async function createPost(postData) {
   try {
     const rpcParams = {
       p_institucion_id: institucionId,
-      p_codigo_acceso: codigoAcceso.trim(),
+      p_codigo_acceso: finalCodigoAcceso,
       p_categoria: categoriaEnum,
       p_titulo: titulo.trim(),
       p_descripcion: (descripcion || '').trim() || null,

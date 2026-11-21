@@ -24,7 +24,8 @@ import {
   CATEGORIAS_ENUM,
   TAG_A_CATEGORIA_MAP,
   TIPOS_REACCION,
-  ETIQUETAS_OFICIALES
+  ETIQUETAS_OFICIALES,
+  INSTITUCIONES_FALLBACK
 } from './services/postsService.js';
 import { renderPostCard, getTagColorClass, getTagEmoji } from './components/postCard.js';
 import { initAdSlider, injectAdsIntoFeed } from './components/adSlider.js';
@@ -837,12 +838,16 @@ async function handleCreatePost() {
   const etiquetas = [...state.selectedPostTags];
 
   // Sede e institución predeterminada oficial (Versión única institucional)
-  const instPredeterminada = (state.instituciones && state.instituciones.length > 0)
-    ? state.instituciones[0]
-    : { id: '11111111-1111-1111-1111-111111111111', codigo_acceso: 'UNICORDOBA2026' };
+  const defaultId = '11111111-1111-1111-1111-111111111111';
+  const defaultCode = 'UNICORDOBA2026';
 
-  const institucionId = instPredeterminada.id;
-  const codigoAcceso = instPredeterminada.codigo_acceso || 'UNICORDOBA2026';
+  const instPredeterminada = (state.instituciones && state.instituciones.length > 0)
+    ? (state.instituciones.find(i => i.id === defaultId) || state.instituciones[0])
+    : { id: defaultId, codigo_acceso: defaultCode };
+
+  const institucionId = instPredeterminada.id || defaultId;
+  const fallbackInfo = INSTITUCIONES_FALLBACK.find(f => f.id === institucionId);
+  const codigoAcceso = instPredeterminada.codigo_acceso || fallbackInfo?.codigo_acceso || defaultCode;
 
   // 1. Validaciones requeridas
   if (!titulo && !contenido) {
